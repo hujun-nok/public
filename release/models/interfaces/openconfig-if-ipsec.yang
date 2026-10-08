@@ -1,0 +1,156 @@
+module openconfig-if-ipsec {
+  yang-version "1";
+
+  namespace "http://openconfig.net/yang/interfaces/ipsec";
+
+  prefix "oc-if-ipsec";
+
+  import openconfig-extensions { prefix "oc-ext"; }
+  import openconfig-if-tunnel { prefix "oc-tun"; }
+  import openconfig-interfaces { prefix "oc-if"; }
+  import openconfig-network-instance { prefix "oc-ni"; }
+  import openconfig-security-ipsec-config {
+    prefix "oc-sec-ipsec-cfg";
+  }
+  import openconfig-types { prefix "oc-types"; }
+
+  organization
+    "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+     www.openconfig.net";
+
+  description
+    "This module adds IPsec configuration to OpenConfig tunnel
+     interfaces.";
+
+  oc-ext:openconfig-version "0.2.0";
+
+  revision "2026-10-09" {
+    description
+      "Use routing-password for the IPsec pre-shared key, and
+       remove the tunnel interface reference grouping.";
+    reference "0.2.0";
+  }
+
+  revision "2026-10-07" {
+    description
+      "Initial revision of IPsec tunnel interface configuration.";
+    reference "0.1.0";
+  }
+
+  oc-ext:regexp-posix;
+  oc-ext:catalog-organization "openconfig";
+  oc-ext:origin "openconfig";
+
+  grouping ipsec-tunnel-config {
+    description
+      "Configuration parameters for an IPsec tunnel.";
+
+    leaf encapsulation-network-instance {
+      type leafref {
+        path "/oc-ni:network-instances/oc-ni:network-instance/" +
+          "oc-ni:config/oc-ni:name";
+      }
+      description
+        "Network instance in which the outer IPsec tunnel packet is
+         forwarded.";
+    }
+
+    leaf ipsec-group {
+      type leafref {
+        path "/oc-sec-ipsec-cfg:security/" +
+          "oc-sec-ipsec-cfg:ipsec/" +
+          "oc-sec-ipsec-cfg:ipsec-groups/" +
+          "oc-sec-ipsec-cfg:ipsec-group/" +
+          "oc-sec-ipsec-cfg:config/oc-sec-ipsec-cfg:name";
+      }
+      description
+        "Reference to a globally configured IPsec group.";
+    }
+  }
+
+  grouping dynamic-signaled-config {
+    description
+      "Configuration parameters for dynamic signaled IPsec tunnel.";
+
+    leaf ipsec-profile {
+      type leafref {
+        path "/oc-sec-ipsec-cfg:security/" +
+          "oc-sec-ipsec-cfg:ipsec/" +
+          "oc-sec-ipsec-cfg:ipsec-profiles/" +
+          "oc-sec-ipsec-cfg:ipsec-profile/" +
+          "oc-sec-ipsec-cfg:config/oc-sec-ipsec-cfg:name";
+      }
+      description
+        "Reference to the IPsec profile used for IKE negotiation.";
+    }
+
+    leaf pre-shared-key {
+      type oc-types:routing-password;
+      description
+        "The pre-shared key used to authenticate the peer.";
+    }
+  }
+
+  grouping dynamic-signaled-top {
+    description
+      "Top-level structure for dynamic signaled IPsec tunnel.";
+
+    container dynamic-signaled {
+      description
+        "IKE-based dynamic signaled IPsec tunnel parameters.";
+
+      container config {
+        description
+          "Configuration parameters for dynamic signaled IPsec tunnel.";
+
+        uses dynamic-signaled-config;
+      }
+
+      container state {
+        config false;
+        description
+          "Operational state parameters for dynamic signaled IPsec tunnel.";
+
+        uses dynamic-signaled-config;
+      }
+    }
+  }
+
+  grouping ipsec-tunnel-top {
+    description
+      "Top-level structure for IPsec tunnel configuration.";
+
+    container ipsec {
+      description
+        "IPsec parameters for the tunnel interface.";
+
+      container config {
+        description
+          "Configuration parameters for the IPsec tunnel.";
+
+        uses ipsec-tunnel-config;
+      }
+
+      container state {
+        config false;
+        description
+          "Operational state parameters for the IPsec tunnel.";
+
+        uses ipsec-tunnel-config;
+      }
+
+      uses dynamic-signaled-top;
+    }
+  }
+
+  augment
+    "/oc-if:interfaces/oc-if:interface/oc-tun:tunnel" {
+    description
+      "Add IPsec configuration to tunnel interfaces.";
+
+    uses ipsec-tunnel-top;
+  }
+}

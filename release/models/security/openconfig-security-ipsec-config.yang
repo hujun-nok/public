@@ -1,0 +1,480 @@
+module openconfig-security-ipsec-config {
+  yang-version "1";
+
+  namespace
+    "http://openconfig.net/yang/security/ipsec/config";
+
+  prefix "oc-sec-ipsec-cfg";
+
+  import openconfig-extensions { prefix "oc-ext"; }
+  import openconfig-interfaces { prefix "oc-if"; }
+  import openconfig-security-types { prefix "oc-sec-types"; }
+
+  organization
+    "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+     www.openconfig.net";
+
+  description
+    "This module adds configuration for IPsec groups, transforms,
+     and profiles to the OpenConfig security IPsec model.";
+
+  oc-ext:openconfig-version "0.3.0";
+
+  revision "2026-10-12" {
+    description
+      "Rename dh-group to ke-method and pfs-group to
+       pfs-ke-method. Define SA lifetime as uint32 seconds.";
+    reference "0.3.0";
+  }
+
+  revision "2026-10-08" {
+    description
+      "Reference IPsec algorithm identities and the security
+       association lifetime from openconfig-security-types.";
+    reference "0.1.1";
+  }
+
+  revision "2026-10-07" {
+    description
+      "Initial revision of IPsec configuration.";
+    reference "0.1.0";
+  }
+
+  oc-ext:regexp-posix;
+  oc-ext:catalog-organization "openconfig";
+  oc-ext:origin "openconfig";
+
+  grouping ipsec-group-config {
+    description
+      "Configuration parameters for an IPsec group.";
+
+    leaf name {
+      type string;
+      description
+        "A name that uniquely identifies the IPsec group within the
+         network instance.";
+    }
+
+    leaf enabled {
+      type boolean;
+      description
+        "When true, the IPsec group is administratively enabled.";
+    }
+  }
+
+  grouping ipsec-group-member-config {
+    description
+      "Configuration parameters for an IPsec group member.";
+
+    leaf interface {
+      type leafref {
+        path "/oc-if:interfaces/oc-if:interface/oc-if:name";
+      }
+      description
+        "Reference to an interface that encrypt/decrypt ESP
+         packets for the group's IPsec tunnels";
+    }
+  }
+
+  grouping ipsec-group-members-top {
+    description
+      "Top-level structure for IPsec group member interfaces.";
+
+    container interfaces {
+      description
+        "Surrounding container for IPsec group member interfaces.";
+
+      list interface {
+        key "interface";
+        description
+          "interfaces that encrypt/decrypt ESP packets for the
+           group's IPsec tunnels.";
+
+        leaf interface {
+          type leafref {
+            path "../config/interface";
+          }
+          description
+            "Reference to the member interface.";
+        }
+
+        container config {
+          description
+            "Configuration parameters for the member interface.";
+
+          uses ipsec-group-member-config;
+        }
+
+        container state {
+          config false;
+          description
+            "Operational state parameters for the member interface.";
+
+          uses ipsec-group-member-config;
+        }
+      }
+    }
+  }
+
+  grouping ipsec-groups-top {
+    description
+      "Top-level structure for IPsec groups.";
+
+    container ipsec-groups {
+      description
+        "Surrounding container for IPsec groups.";
+
+      list ipsec-group {
+        key "name";
+        description
+          "A group of interfaces sharing CHILD_SA of IPsec tunnels.";
+
+        leaf name {
+          type leafref {
+            path "../config/name";
+          }
+          description
+            "Reference to the IPsec group name.";
+        }
+
+        container config {
+          description
+            "Configuration parameters for the IPsec group.";
+
+          uses ipsec-group-config;
+        }
+
+        container state {
+          config false;
+          description
+            "Operational state parameters for the IPsec group.";
+
+          uses ipsec-group-config;
+        }
+
+        uses ipsec-group-members-top;
+      }
+    }
+  }
+
+  grouping ike-transform-config {
+    description
+      "Configuration parameters for an IKE_SA.";
+
+    leaf name {
+      type string;
+      description
+        "A name that uniquely identifies the IKE transform.";
+    }
+
+    leaf encryption-algorithm {
+      type identityref {
+        base oc-sec-types:IPSEC_ENCRYPTION_ALGORITHM;
+      }
+      description
+        "Encryption algorithm for the IKE_SA.";
+    }
+
+    leaf integrity-algorithm {
+      type identityref {
+        base oc-sec-types:IPSEC_INTEGRITY_ALGORITHM;
+      }
+      description
+        "Integrity algorithm for the IKE_SA.";
+    }
+
+    leaf prf-algorithm {
+      type identityref {
+        base oc-sec-types:IPSEC_PRF_ALGORITHM;
+      }
+      description
+        "Pseudorandom function for the IKE_SA.";
+    }
+
+    leaf ke-method {
+      type identityref {
+        base oc-sec-types:KE_METHOD;
+      }
+      description
+        "Key exchange method for the IKE_SA.";
+    }
+
+    leaf lifetime {
+      type uint32;
+      units "seconds";
+      description
+        "Lifetime of the IKE_SA.";
+    }
+  }
+
+  grouping child-transform-config {
+    description
+      "Configuration parameters for a CHILD_SA.";
+
+    leaf name {
+      type string;
+      description
+        "A name that uniquely identifies the CHILD_SA transform.";
+    }
+
+    leaf encryption-algorithm {
+      type identityref {
+        base oc-sec-types:IPSEC_ENCRYPTION_ALGORITHM;
+      }
+      description
+        "Encryption algorithm  for the CHILD_SA.";
+    }
+
+    leaf integrity-algorithm {
+      type identityref {
+        base oc-sec-types:IPSEC_INTEGRITY_ALGORITHM;
+      }
+      description
+        "Integrity algorithm for the CHILD_SA.";
+    }
+
+    leaf pfs-ke-method {
+      type identityref {
+        base oc-sec-types:KE_METHOD;
+      }
+      description
+        "Key exchange method used for perfect forward secrecy.";
+    }
+
+    leaf lifetime {
+      type uint32;
+      units "seconds";
+      description
+        "Lifetime of the CHILD_SA.";
+    }
+  }
+
+  grouping ike-transforms-top {
+    description
+      "Top-level structure for IKE_SA.";
+
+    container ike-transforms {
+      description
+        "Surrounding container for IKE_SA.";
+
+      list ike-transform {
+        key "name";
+        description
+          "A list of acceptable IKE_SA configurations.";
+
+        leaf name {
+          type leafref {
+            path "../config/name";
+          }
+          description
+            "Reference to the IKE transform name.";
+        }
+
+        container config {
+          description
+            "Configuration parameters for the IKE transform.";
+
+          uses ike-transform-config;
+        }
+
+        container state {
+          config false;
+          description
+            "Operational state parameters for the IKE transform.";
+
+          uses ike-transform-config;
+        }
+      }
+    }
+  }
+
+  grouping child-transforms-top {
+    description
+      "Top-level structure for CHILD_SA transforms.";
+
+    container child-transforms {
+      description
+        "Surrounding container for CHILD_SA transforms.";
+
+      list child-transform {
+        key "name";
+        description
+          "A list of acceptable CHILD_SA configurations.";
+
+        leaf name {
+          type leafref {
+            path "../config/name";
+          }
+          description
+            "Reference to the CHILD_SA transform name.";
+        }
+
+        container config {
+          description
+            "Configuration parameters for the CHILD_SA transform.";
+
+          uses child-transform-config;
+        }
+
+        container state {
+          config false;
+          description
+            "Operational state parameters for the CHILD_SA
+             transform.";
+
+          uses child-transform-config;
+        }
+      }
+    }
+  }
+
+  grouping ipsec-profile-config {
+    description
+      "Configuration parameters for an IPsec profile.";
+
+    leaf name {
+      type string;
+      description
+        "A name that uniquely identifies the IPsec profile.";
+    }
+
+    leaf-list ike-transforms {
+      type leafref {
+        path "../../../../ike-transforms/ike-transform/" +
+          "config/name";
+      }
+      min-elements 1;
+      ordered-by user;
+      description
+        "Ordered list of acceptable IKE_SA configurations.";
+    }
+
+    leaf-list child-transforms {
+      type leafref {
+        path "../../../../child-transforms/child-transform/" +
+          "config/name";
+      }
+      min-elements 1;
+      ordered-by user;
+      description
+        "Ordered list of acceptable CHILD_SA configurations.";
+    }
+  }
+
+  grouping dead-peer-detection-config {
+    description
+      "Configuration parameters for IKE dead peer detection.";
+
+    leaf enabled {
+      type boolean;
+      description
+        "When true, dead peer detection is enabled.";
+    }
+
+    leaf retry-interval {
+      type uint16;
+      units "seconds";
+      description
+        "Time to wait for a peer response before a retry.";
+    }
+
+    leaf max-retries {
+      type uint16;
+      description
+        "Number of unanswered probes before the peer is declared
+         unavailable.";
+    }
+  }
+
+  grouping dead-peer-detection-top {
+    description
+      "Top-level structure for dead peer detection.";
+
+    container dead-peer-detection {
+      description
+        "Parameters controlling dead peer detection.";
+
+      container config {
+        description
+          "Configuration parameters for dead peer detection.";
+
+        uses dead-peer-detection-config;
+      }
+
+      container state {
+        config false;
+        description
+          "Operational state parameters for dead peer detection.";
+
+        uses dead-peer-detection-config;
+      }
+    }
+  }
+
+  grouping ipsec-profiles-top {
+    description
+      "Top-level structure for IPsec profiles.";
+
+    container ipsec-profiles {
+      description
+        "Surrounding container for IPsec profiles.";
+
+      list ipsec-profile {
+        key "name";
+        description
+          "An IPsec profile that selects IKE and CHILD_SA
+           transforms.";
+
+        leaf name {
+          type leafref {
+            path "../config/name";
+          }
+          description
+            "Reference to the IPsec profile name.";
+        }
+
+        container config {
+          description
+            "Configuration parameters for the IPsec profile.";
+
+          uses ipsec-profile-config;
+        }
+
+        container state {
+          config false;
+          description
+            "Operational state parameters for the IPsec profile.";
+
+          uses ipsec-profile-config;
+        }
+
+        uses dead-peer-detection-top;
+      }
+    }
+  }
+
+  grouping ipsec-configuration-top {
+    description
+      "Top-level IPsec configuration structure.";
+
+    container security {
+      description
+        "Root container for security configuration.";
+
+      container ipsec {
+        description
+          "IPsec groups, transforms, and profiles.";
+
+        uses ipsec-groups-top;
+        uses ike-transforms-top;
+        uses child-transforms-top;
+        uses ipsec-profiles-top;
+      }
+    }
+  }
+
+  uses ipsec-configuration-top;
+}

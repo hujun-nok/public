@@ -37,7 +37,14 @@ module openconfig-security-ike {
     description
       "This module defines configuration and operational state for IPSec.";
 
-    oc-ext:openconfig-version "0.1.0";
+    oc-ext:openconfig-version "0.2.0";
+
+    revision 2026-10-12 {
+        description
+          "Reference KE_METHOD identities for PFS key exchange.";
+        reference
+          "0.2.0";
+    }
 
     revision 2025-12-03 {
         description
@@ -376,7 +383,7 @@ module openconfig-security-ike {
 
                                 leaf pfs-dh-group {
                                     type identityref {
-                                        base oc-sec-types:DH_GROUP;
+                                        base oc-sec-types:KE_METHOD;
                                     }
                                     mandatory true;
                                     description
@@ -606,7 +613,7 @@ module openconfig-security-ike {
 
                                 leaf pfs-dh-group {
                                     type identityref {
-                                        base oc-sec-types:DH_GROUP;
+                                        base oc-sec-types:KE_METHOD;
                                     }
                                     mandatory true;
                                     description

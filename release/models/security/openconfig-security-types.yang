@@ -20,7 +20,23 @@ module openconfig-security-types {
     "This module defines identities and types used with the OpenConfig
     security modules.";
 
-  oc-ext:openconfig-version "0.1.0";
+  oc-ext:openconfig-version "0.4.0";
+
+  revision 2026-10-12 {
+    description
+      "Rename DH_GROUP identities to KE_METHOD. Remove the
+       security-association-lifetime type.";
+    reference
+      "0.4.0";
+  }
+
+  revision 2026-10-08 {
+    description
+      "Add IPsec encryption, integrity, and PRF algorithm
+       identities, and the security association lifetime type.";
+    reference
+      "0.2.0";
+  }
 
   revision 2025-12-10 {
     description
@@ -37,7 +53,8 @@ module openconfig-security-types {
   // --- Base and Derived Identities ---
   identity CONNECTION_STATUS {
     description
-      "Base identity for the operational status of an IPsec connection";
+      "Base identity for the operational status of an IPsec
+       connection";
   }
   identity UNKNOWN {
     base CONNECTION_STATUS;
@@ -57,12 +74,15 @@ module openconfig-security-types {
   identity ACTIVE {
     base CONNECTION_STATUS;
     description
-      "The IPsec negotiation is complete and ready for data transfer.";
+      "The IPsec negotiation is complete and ready for data
+       transfer.";
   }
   identity INVALID {
     base CONNECTION_STATUS;
     description
-      "The connection is in an invalid state due to a configuration or system error that prevents connection establishment.";
+      "The connection is in an invalid state due to a
+       configuration or system error that prevents connection
+       establishment.";
   }
   identity ESTABLISHED {
     base CONNECTION_STATUS;
@@ -85,64 +105,65 @@ module openconfig-security-types {
       "This device only accepts incoming connection requests.";
   }
 
-  identity DH_GROUP {
+  identity KE_METHOD {
     description
-      "Base identity for Diffie-Hellman groups used for key exchange (IKE Phase 1) and Perfect Forward Secrecy (PFS in Phase 2).";
+      "Base identity for key exchange methods used for IKE and
+       perfect forward secrecy.";
   }
-  identity DH_GROUP_1 {
-    base DH_GROUP;
+  identity KE_METHOD_1 {
+    base KE_METHOD;
     description
-      "Diffie-Hellman group 1 (768 bit)";
+      "Key exchange method 1 (768 bit MODP group)";
   }
-  identity DH_GROUP_2 {
-    base DH_GROUP;
+  identity KE_METHOD_2 {
+    base KE_METHOD;
     description
-      "Diffie-Hellman group 2 (1024 bit)";
+      "Key exchange method 2 (1024 bit MODP group)";
   }
-  identity DH_GROUP_5 {
-    base DH_GROUP;
+  identity KE_METHOD_5 {
+    base KE_METHOD;
     description
-      "Diffie-Hellman group 5 (1536 bit)";
+      "Key exchange method 5 (1536 bit MODP group)";
   }
-  identity DH_GROUP_14 {
-    base DH_GROUP;
+  identity KE_METHOD_14 {
+    base KE_METHOD;
     description
-      "Diffie-Hellman group 14 (2048 bit)";
+      "Key exchange method 14 (2048 bit MODP group)";
   }
-  identity DH_GROUP_15 {
-    base DH_GROUP;
+  identity KE_METHOD_15 {
+    base KE_METHOD;
     description
-      "Diffie-Hellman group 15 (3072 bit)";
+      "Key exchange method 15 (3072 bit MODP group)";
   }
-  identity DH_GROUP_16 {
-    base DH_GROUP;
+  identity KE_METHOD_16 {
+    base KE_METHOD;
     description
-      "Diffie-Hellman group 16 (4096 bit)";
+      "Key exchange method 16 (4096 bit MODP group)";
   }
-  identity DH_GROUP_17 {
-    base DH_GROUP;
+  identity KE_METHOD_17 {
+    base KE_METHOD;
     description
-      "Diffie-Hellman group 17 (6144 bit)";
+      "Key exchange method 17 (6144 bit MODP group)";
   }
-  identity DH_GROUP_19 {
-    base DH_GROUP;
+  identity KE_METHOD_19 {
+    base KE_METHOD;
     description
-      "Diffie-Hellman group 19 (256 bit ecp)";
+      "Key exchange method 19 (256 bit ECP group)";
   }
-  identity DH_GROUP_20 {
-    base DH_GROUP;
+  identity KE_METHOD_20 {
+    base KE_METHOD;
     description
-      "Diffie-Hellman group 20 (384 bit ecp)";
+      "Key exchange method 20 (384 bit ECP group)";
   }
-  identity DH_GROUP_21 {
-    base DH_GROUP;
+  identity KE_METHOD_21 {
+    base KE_METHOD;
     description
-      "Diffie-Hellman group 21 (521 bit ecp)";
+      "Key exchange method 21 (521 bit ECP group)";
   }
-  identity DH_GROUP_24 {
-    base DH_GROUP;
+  identity KE_METHOD_24 {
+    base KE_METHOD;
     description
-      "Diffie-Hellman group 24 (2048 bit, 256 bit subgroup)";
+      "Key exchange method 24 (2048 bit MODP group with 256 bit subgroup)";
   }
 
   identity IKE_AUTH_METHOD {
@@ -233,6 +254,154 @@ module openconfig-security-types {
     base TUNNEL_MODE;
     description
       "Generic Routing Encapsulation (GRE) tunnel encapsulation.";
+  }
+
+  identity IPSEC_ENCRYPTION_ALGORITHM {
+    description
+      "Base identity for IPsec and IKE encryption algorithms.";
+  }
+
+  identity TRIPLE_DES_CBC {
+    base IPSEC_ENCRYPTION_ALGORITHM;
+    description
+      "Triple Data Encryption Standard in CBC mode.";
+  }
+
+  identity AES_128_CBC {
+    base IPSEC_ENCRYPTION_ALGORITHM;
+    description
+      "AES with a 128-bit key in CBC mode.";
+  }
+
+  identity AES_192_CBC {
+    base IPSEC_ENCRYPTION_ALGORITHM;
+    description
+      "AES with a 192-bit key in CBC mode.";
+  }
+
+  identity AES_256_CBC {
+    base IPSEC_ENCRYPTION_ALGORITHM;
+    description
+      "AES with a 256-bit key in CBC mode.";
+  }
+
+  identity AES_128_GCM_8 {
+    base IPSEC_ENCRYPTION_ALGORITHM;
+    description
+      "AES with a 128-bit key in GCM mode and an 8-octet ICV.";
+  }
+
+  identity AES_128_GCM_16 {
+    base IPSEC_ENCRYPTION_ALGORITHM;
+    description
+      "AES with a 128-bit key in GCM mode and a 16-octet ICV.";
+  }
+
+  identity AES_256_GCM_8 {
+    base IPSEC_ENCRYPTION_ALGORITHM;
+    description
+      "AES with a 256-bit key in GCM mode and an 8-octet ICV.";
+  }
+
+  identity AES_256_GCM_16 {
+    base IPSEC_ENCRYPTION_ALGORITHM;
+    description
+      "AES with a 256-bit key in GCM mode and a 16-octet ICV.";
+  }
+
+  identity NULL_AES_128_GMAC {
+    base IPSEC_ENCRYPTION_ALGORITHM;
+    description
+      "Null encryption with AES-128 GMAC authentication.";
+  }
+
+  identity NULL_AES_192_GMAC {
+    base IPSEC_ENCRYPTION_ALGORITHM;
+    description
+      "Null encryption with AES-192 GMAC authentication.";
+  }
+
+  identity NULL_AES_256_GMAC {
+    base IPSEC_ENCRYPTION_ALGORITHM;
+    description
+      "Null encryption with AES-256 GMAC authentication.";
+  }
+
+  identity IPSEC_INTEGRITY_ALGORITHM {
+    description
+      "Base identity for IPsec and IKE integrity algorithms.";
+  }
+
+  identity HMAC_SHA_1 {
+    base IPSEC_INTEGRITY_ALGORITHM;
+    description
+      "AUTH_HMAC_SHA1_96 algorithm.";
+  }
+
+  identity HMAC_SHA_256 {
+    base IPSEC_INTEGRITY_ALGORITHM;
+    description
+      "AUTH_HMAC_SHA2_256_128 algorithm.";
+  }
+
+  identity HMAC_SHA_384 {
+    base IPSEC_INTEGRITY_ALGORITHM;
+    description
+      "AUTH_HMAC_SHA2_384_192 algorithm.";
+  }
+
+  identity HMAC_SHA_512 {
+    base IPSEC_INTEGRITY_ALGORITHM;
+    description
+      "AUTH_HMAC_SHA2_512_256 algorithm.";
+  }
+
+  identity AUTHENTICATION_ENCRYPTION {
+    base IPSEC_INTEGRITY_ALGORITHM;
+    description
+      "Integrity is provided by an authenticated encryption
+       algorithm and no separate integrity algorithm is used.";
+  }
+
+  identity IPSEC_PRF_ALGORITHM {
+    description
+      "Base identity for IKE pseudorandom function algorithms.";
+  }
+
+  identity PRF_HMAC_SHA_1 {
+    base IPSEC_PRF_ALGORITHM;
+    description
+      "Pseudorandom function based on PRF_HMAC_SHA1.";
+  }
+
+  identity PRF_HMAC_SHA_256 {
+    base IPSEC_PRF_ALGORITHM;
+    description
+      "Pseudorandom function based on PRF_HMAC_SHA2_256.";
+  }
+
+  identity PRF_HMAC_SHA_384 {
+    base IPSEC_PRF_ALGORITHM;
+    description
+      "Pseudorandom function based on PRF_HMAC_SHA2_384.";
+  }
+
+  identity PRF_HMAC_SHA_512 {
+    base IPSEC_PRF_ALGORITHM;
+    description
+      "Pseudorandom function based on PRF_HMAC_SHA2_512.";
+  }
+
+  identity PRF_AES_XCBC {
+    base IPSEC_PRF_ALGORITHM;
+    description
+      "Pseudorandom function based on PRF_AES128_XCBC.";
+  }
+
+  identity PRF_SAME_AS_INTEGRITY {
+    base IPSEC_PRF_ALGORITHM;
+    description
+      "Use the integrity algorithm as the pseudorandom function.";
   }
 // augment statements
 // rpc statements

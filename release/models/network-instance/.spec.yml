@@ -12,6 +12,7 @@
     - yang/segment-routing/openconfig-segment-routing.yang
     - yang/rib/openconfig-rib-bgp-ext.yang
     - yang/local-routing/openconfig-local-routing-network-instance.yang
+    - yang/network-instance/openconfig-network-instance-ipsec-nexthop.yang
   build:
     - yang/aft/openconfig-aft-network-instance.yang
     - yang/aft/openconfig-aft-summary.yang
@@ -20,6 +21,7 @@
     - yang/network-instance/openconfig-sockets.yang
     - yang/segment-routing/openconfig-rsvp-sr-ext.yang
     - yang/local-routing/openconfig-local-routing-network-instance.yang
+    - yang/network-instance/openconfig-network-instance-ipsec-nexthop.yang
   run-ci: true
 - name: openconfig-network-instance-bgp-rib-augment
   build:

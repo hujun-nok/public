@@ -11,6 +11,7 @@
     - yang/interfaces/openconfig-if-rates.yang
     - yang/vlan/openconfig-vlan.yang
     - yang/interfaces/openconfig-if-tunnel.yang
+    - yang/interfaces/openconfig-if-ipsec.yang
     - yang/platform/openconfig-platform-port.yang
     - yang/platform/openconfig-platform-transceiver.yang
     - yang/interfaces/openconfig-if-sdn-ext.yang
@@ -30,6 +31,7 @@
     - yang/interfaces/openconfig-if-rates.yang
     - yang/vlan/openconfig-vlan.yang
     - yang/interfaces/openconfig-if-tunnel.yang
+    - yang/interfaces/openconfig-if-ipsec.yang
     - yang/platform/openconfig-platform-port.yang
     - yang/platform/openconfig-platform-transceiver.yang
     - yang/interfaces/openconfig-if-sdn-ext.yang

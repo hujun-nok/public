@@ -1,0 +1,90 @@
+module openconfig-network-instance-ipsec-nexthop {
+  yang-version "1";
+
+  namespace
+    "http://openconfig.net/yang/network-instance/ipsec-nexthop";
+
+  prefix "oc-ni-ipsec-nh";
+
+  import openconfig-aft-types { prefix "oc-aftt"; }
+  import openconfig-extensions { prefix "oc-ext"; }
+  import openconfig-interfaces { prefix "oc-if"; }
+  import openconfig-network-instance { prefix "oc-ni"; }
+
+  organization
+    "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+     www.openconfig.net";
+
+  description
+    "This module adds IPsec encapsulation to statically configured
+     OpenConfig next-hop encapsulation headers.";
+
+  oc-ext:openconfig-version "0.2.1";
+
+  revision "2026-10-09" {
+    description
+      "Select the IPsec encapsulation header when the
+       encapsulation-header-type is IPSEC. Reference the tunnel
+       with the common interface reference.";
+    reference "0.2.1";
+  }
+
+  revision "2026-10-07" {
+    description
+      "Initial revision of static IPsec next-hop configuration.";
+    reference "0.1.0";
+  }
+
+  oc-ext:regexp-posix;
+  oc-ext:catalog-organization "openconfig";
+  oc-ext:origin "openconfig";
+
+  grouping static-ipsec-encap-header-top {
+    description
+      "Top-level structure for a static IPsec encapsulation
+       header.";
+
+    container ipsec {
+      when "../oc-ni:config/oc-ni:type = 'oc-aftt:IPSEC'" {
+        description
+          "The IPsec container is valid when the encapsulation
+           header type is IPSEC.";
+      }
+      description
+        "IPsec encapsulation for this header entry. The container
+         applies when the encapsulation header type is IPSEC. The
+         referenced tunnel subinterface supplies the IPsec tunnel.";
+
+      container config {
+        description
+          "Configuration parameters for the IPsec encapsulation
+           header.";
+
+        uses oc-if:interface-ref-common;
+      }
+
+      container state {
+        config false;
+        description
+          "Operational state parameters for the IPsec encapsulation
+           header.";
+
+        uses oc-if:interface-ref-common;
+      }
+    }
+  }
+
+  augment
+    "/oc-ni:network-instances/oc-ni:network-instance/" +
+    "oc-ni:static/oc-ni:next-hops/oc-ni:next-hop/" +
+    "oc-ni:encap-headers/oc-ni:encap-header" {
+    description
+      "Add IPsec encapsulation to a static next-hop encapsulation
+       header.";
+
+    uses static-ipsec-encap-header-top;
+  }
+}
